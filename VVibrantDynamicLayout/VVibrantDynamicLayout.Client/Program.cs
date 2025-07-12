@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using VVibrantDynamicLayout.Client.Models;
+using VVibrantDynamicLayout.Client.Configuration;
 
 namespace VVibrantDynamicLayout.Client
 {
@@ -11,7 +11,9 @@ namespace VVibrantDynamicLayout.Client
 
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-            builder.Services.Configure<LayoutViewModel>(builder.Configuration.GetSection("Layout"));
+            builder.Services.Configure<LayoutSettings>(builder.Configuration.GetSection("Layout"));
+
+            var tm = builder.Configuration.GetSection("");
 
             await builder.Build().RunAsync();
         }

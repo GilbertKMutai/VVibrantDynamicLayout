@@ -1,3 +1,29 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Options
+@using VVibrantDynamicLayout.Client.Configuration
+@inject IOptions<LayoutSettings> LayoutSettings
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dynamic Layout</PageTitle>
+
+@if (LayoutConfig?.Partitions != null)
+{
+    <div class="layout-container" style="--gutter: @LayoutConfig.Gutter; --partition-spacing: @LayoutConfig.PartitionSpacing;">
+        @foreach (var partition in LayoutConfig.Partitions)
+        {
+            <LayoutRenderer LayoutComponentData="partition" />
+        }
+    </div>
+}
+else
+{
+    <p>Loading layout configuration...</p>
+}
+
+@code {
+    private LayoutSettings LayoutConfig;
+
+    protected override void OnInitialized()
+    {
+        LayoutConfig = LayoutSettings.Value;
+    }
+}

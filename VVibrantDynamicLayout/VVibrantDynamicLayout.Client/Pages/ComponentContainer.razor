@@ -1,0 +1,22 @@
+﻿@if (ChildContent != null)
+{
+    <div class="layout-item @($"align-{Alignment}")" style="@GetStyle()">
+        @ChildContent
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Width { get; set; } = "100%";
+
+    [Parameter]
+    public string Alignment { get; set; } = "left";
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private string GetStyle()
+    {
+        return $"width: {Width}; flex-grow: 0; flex-shrink: 0;";
+    }
+}

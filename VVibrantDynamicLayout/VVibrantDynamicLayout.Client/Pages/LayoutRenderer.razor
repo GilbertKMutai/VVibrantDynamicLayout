@@ -1,0 +1,119 @@
+﻿@using Microsoft.Extensions.Options
+@using VVibrantDynamicLayout.Client.Configuration
+@using VVibrantDynamicLayout.Client.Enums
+@inject IOptions<LayoutSettings> LayoutSettings
+
+@if (LayoutComponentData != null)
+{
+    <div class="@GetTypeClass()" style="@GetContainerStyle()">
+        @if (LayoutComponentData.Components != null)
+        {
+            @foreach (var childComponent in LayoutComponentData.Components)
+            {
+                if (IsLayoutType(childComponent.Type))
+                {
+                    <LayoutRenderer LayoutComponentData="childComponent" />
+                }
+                else
+                {
+                    <ComponentContainer Width="@childComponent.Width" Alignment="@childComponent.Alignment">
+                        @RenderDynamicComponent(childComponent.Id)
+                    </ComponentContainer>
+                }
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public LayoutComponent LayoutComponentData { get; set; }
+
+    private string Gutter => LayoutSettings.Value.Gutter ?? "0px";
+    private string PartitionSpacing => LayoutSettings.Value.PartitionSpacing ?? "0px";
+   
+    private bool IsLayoutType(string type)
+    {
+        return type == "row" || type == "column";
+    }
+
+    private string GetTypeClass()
+    {
+        return LayoutComponentData.Type switch
+        {
+            "row" => "layout-row",
+            "column" => "layout-column",
+            _ => "layout-item" // Fallback, though actual components are handled by ComponentContainer
+        };
+    }
+
+    private string GetContainerStyle()
+    {
+        var style = "";
+
+        if (LayoutComponentData.Type == "row" || LayoutComponentData.Type == "column")
+        {
+            style += $"gap: {Gutter};";
+        }
+
+
+
+        if (!string.IsNullOrEmpty(LayoutComponentData.Width))
+        {
+            style += $"flex-basis: {LayoutComponentData.Width}; flex-grow: 0; flex-shrink: 0;";
+        }
+        if (!string.IsNullOrEmpty(LayoutComponentData.Alignment))
+        {
+            // For row/column containers, alignment applies to their content if they are direct children of a flex container
+            // For actual components, ComponentContainer handles the text alignment.
+            // Here, it primarily affects justify-content for flex containers if they are items in another flex container.
+            style += $"justify-content: {GetFlexAlignment(LayoutComponentData.Alignment)};";
+        }
+
+        return style;
+    }
+
+    private string GetFlexAlignment(string alignment) => alignment switch
+    {
+        "left" => "flex-start",
+        "right" => "flex-end",
+        "center" => "center",
+        _ => "flex-start"
+    };
+
+
+    private RenderFragment RenderDynamicComponent(string componentId) => builder =>
+    {
+        Type componentType = GetBlazorComponentType(componentId);
+        if (componentType != null)
+        {
+            builder.OpenComponent(0, componentType);
+            builder.CloseComponent();
+        }
+        else
+        {
+            builder.AddContent(0, $"Component not found: {componentId}");
+        }
+    };
+
+    // This method maps string IDs to actual Blazor component types.
+    // You can use a dictionary for more complex scenarios or a service.
+    private Type GetBlazorComponentType(string componentId)
+    {
+        return componentId switch
+        {
+            "Component-Logo" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.LogoComponent),
+            "Component-OpeningHours" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.OpeningHoursComponent),
+            "Component-ContactDetails" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.ContactDetailsComponent),
+            "Component-Menu" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.MenuComponent),
+            "Component-ProfileMenu" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.ProfileMenuComponent),
+            "Component-Search" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.SearchComponent),
+            "Component-QuickLinks" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.QuickLinksComponent),
+            "Component-Announcements" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.AnnouncementsComponent),
+            "Component-NewArrivals" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.NewArrivalsComponent),
+            "Component-Copyright" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.CopyrightComponent),
+            "Component-OtherInfo" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.OtherInfoComponent),
+            _ => null
+        };
+    }
+}

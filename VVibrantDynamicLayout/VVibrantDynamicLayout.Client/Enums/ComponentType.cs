@@ -2,7 +2,7 @@
 
 namespace VVibrantDynamicLayout.Client.Enums;
 
-public enum ComponentType
+public enum LayoutType
 {
     [EnumMember(Value = "row")]
     Row,
