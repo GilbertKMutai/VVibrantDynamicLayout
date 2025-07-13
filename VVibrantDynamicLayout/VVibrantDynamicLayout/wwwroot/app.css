@@ -73,37 +73,43 @@ h1:focus {
     width: 100%;
     box-sizing: border-box;
     min-height: 50px;
-    padding: 5px;
+    /*padding: 5px;*/
 }
 
+
+
+
 .layout-container {
-    flex-direction: column; 
+    flex-direction: column;
     flex-grow: 1;
     padding: var(--partition-spacing);
     gap: var(--partition-spacing);
-    border: 2px solid purple;
+    /*border: 2px solid purple;*/
     background-color: #e0f7fa;
+    padding: 5px;
 }
 
 .layout-row {
-    flex-direction: row; /* Arranges children horizontally */
-    gap: var(--gutter); /* Spacing between items within the row */
-    border: 2px solid red; /* DEBUG: See row boundaries */
-    background-color: #ffe0b2; /* DEBUG: Light orange for clarity */
+    /* flex-direction: row;  Arranges children horizontally 
+    gap: var(--gutter);  Spacing between items within the row 
+    border: 2px solid red;  DEBUG: See row boundaries 
+    background-color: #ffe0b2;  DEBUG: Light orange for clarity */
+    padding: 5px;
 }
 
 .layout-column {
     flex-direction: column; /* Arranges children vertically */
     gap: var(--gutter); /* Spacing between items within the column */
-    border: 2px solid green; /* DEBUG: See column boundaries */
+    /*border: 2px solid green;*/ /* DEBUG: See column boundaries */
     background-color: #c8e6c9; /* DEBUG: Light green for clarity */
+    
 }
 
 /* Styles for individual component wrappers (applied by ComponentContainer.razor) */
 .layout-item {
     box-sizing: border-box;
     padding: 10px;
-    border: 1px dashed blue; /* DEBUG: See individual component boundaries */
+    /*border: 1px dashed blue;*/ /* DEBUG: See individual component boundaries */
     background-color: #fce4ec; /* DEBUG: Light pink for clarity */
     /* Ensure content within the item itself aligns correctly */
     display: flex; /* Make the item itself a flex container */
@@ -112,10 +118,10 @@ h1:focus {
 }
 
 /* Alignment styles for content within a layout-item */
-.align-left {
-    justify-content: flex-start; /* For flex content inside .layout-item */
+/*.align-left {
+    justify-content: flex-start;*/ /* For flex content inside .layout-item */
     /*text-align: left;*/ /* Fallback for block content */
-}
+/*}
 
 .align-right {
     justify-content: flex-end;
@@ -125,4 +131,4 @@ h1:focus {
 .align-center {
     justify-content: center;
     text-align: center;
-}
+}*/
