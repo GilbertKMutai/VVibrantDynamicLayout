@@ -18,8 +18,7 @@
     private string GetStyle()
     {
         string plainWidthString= Width.Replace("%", "");
-        int plainWidthInt = int.Parse(plainWidthString);
-        int flexBasis = 200 / plainWidthInt;
+        int flexBasis = int.Parse(plainWidthString);
 
         return $"width: {Width}; flex: {flexBasis};";
     }
