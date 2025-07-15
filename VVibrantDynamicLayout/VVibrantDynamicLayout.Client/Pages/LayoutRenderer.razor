@@ -11,7 +11,7 @@
         {
             @foreach (var childComponent in LayoutComponentData.Components)
             {
-                if (IsLayoutType(childComponent.Type))
+                if (childComponent.IsPartition)
                 {
                     <LayoutRenderer LayoutComponentData="childComponent" IsLastPartition = "false" />
                 }
@@ -34,11 +34,6 @@
 
     private string Gutter => LayoutSettings.Value.Gutter ?? "0px";
     private string PartitionSpacing => LayoutSettings.Value.PartitionSpacing ?? "0px";
-   
-    private bool IsLayoutType(string type)
-    {
-        return type == "row" || type == "column";
-    }
 
     private string GetTypeClass()
     {
@@ -54,7 +49,7 @@
     {
         var style = "";
 
-        if (LayoutComponentData.Type == "row" || LayoutComponentData.Type == "column")
+        if (LayoutComponentData.IsPartition)
         {
             style += $"gap: {Gutter};";
         }
@@ -68,7 +63,7 @@
             style += $"justify-content: {GetFlexAlignment(LayoutComponentData.Alignment)};";
         }
 
-        if (IsLastPartition && LayoutComponentData.Type == "row")
+        if (IsLastPartition)
         {
             style += "margin-top: auto;";
         }
