@@ -1,6 +1,7 @@
 ﻿@using Microsoft.Extensions.Options
 @using VVibrantDynamicLayout.Client.Configuration
 @using VVibrantDynamicLayout.Client.Enums
+
 @inject IOptions<LayoutSettings> LayoutSettings
 
 @if (LayoutComponentData != null)
@@ -8,7 +9,6 @@
     <div class="@GetTypeClass()" style="@GetContainerStyle()">
         @if (LayoutComponentData.Components != null)
         {
-          
             @foreach (var childComponent in LayoutComponentData.Components)
             {
                 if (IsLayoutType(childComponent.Type))
@@ -46,7 +46,7 @@
         {
             "row" => "layout-row",
             "column" => "layout-column",
-            _ => "layout-item" // Fallback, though actual components are handled by ComponentContainer
+            _ => "layout-item"
         };
     }
 
@@ -59,17 +59,12 @@
             style += $"gap: {Gutter};";
         }
 
-
-
         if (!string.IsNullOrEmpty(LayoutComponentData.Width))
         {
             style += $"flex-basis: {LayoutComponentData.Width}; flex-grow: 0; flex-shrink: 0;";
         }
         if (!string.IsNullOrEmpty(LayoutComponentData.Alignment))
         {
-            // For row/column containers, alignment applies to their content if they are direct children of a flex container
-            // For actual components, ComponentContainer handles the text alignment.
-            // Here, it primarily affects justify-content for flex containers if they are items in another flex container.
             style += $"justify-content: {GetFlexAlignment(LayoutComponentData.Alignment)};";
         }
 
@@ -104,8 +99,6 @@
         }
     };
 
-    // This method maps string IDs to actual Blazor component types.
-    // You can use a dictionary for more complex scenarios or a service.
     private Type GetBlazorComponentType(string componentId)
     {
         return componentId switch
