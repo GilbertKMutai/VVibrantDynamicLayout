@@ -8,11 +8,12 @@
     <div class="@GetTypeClass()" style="@GetContainerStyle()">
         @if (LayoutComponentData.Components != null)
         {
+          
             @foreach (var childComponent in LayoutComponentData.Components)
             {
                 if (IsLayoutType(childComponent.Type))
                 {
-                    <LayoutRenderer LayoutComponentData="childComponent" />
+                    <LayoutRenderer LayoutComponentData="childComponent" IsLastPartition = "false" />
                 }
                 else
                 {
@@ -28,6 +29,8 @@
 @code {
     [Parameter]
     public LayoutComponent LayoutComponentData { get; set; }
+    [Parameter]
+    public bool IsLastPartition { get; set; }
 
     private string Gutter => LayoutSettings.Value.Gutter ?? "0px";
     private string PartitionSpacing => LayoutSettings.Value.PartitionSpacing ?? "0px";
@@ -68,6 +71,11 @@
             // For actual components, ComponentContainer handles the text alignment.
             // Here, it primarily affects justify-content for flex containers if they are items in another flex container.
             style += $"justify-content: {GetFlexAlignment(LayoutComponentData.Alignment)};";
+        }
+
+        if (IsLastPartition && LayoutComponentData.Type == "row")
+        {
+            style += "margin-top: auto;";
         }
 
         return style;
@@ -113,7 +121,7 @@
             "Component-NewArrivals" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.NewArrivalsComponent),
             "Component-Copyright" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.CopyrightComponent),
             "Component-OtherInfo" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.OtherInfoComponent),
-            _ => null
+            _ => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.DefaultComponent)
         };
     }
 }

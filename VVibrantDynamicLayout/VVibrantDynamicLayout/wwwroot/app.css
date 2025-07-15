@@ -86,6 +86,7 @@ h1:focus {
     gap: var(--partition-spacing);
     /*border: 2px solid purple;*/
     background-color: #e0f7fa;
+    height: 100%;
     padding: 5px;
 }
 
@@ -95,6 +96,10 @@ h1:focus {
     border: 2px solid red;  DEBUG: See row boundaries 
     background-color: #ffe0b2;  DEBUG: Light orange for clarity */
     padding: 5px;
+}
+
+.layout-row:last-of-type {
+    
 }
 
 .layout-column {
@@ -132,3 +137,13 @@ h1:focus {
     justify-content: center;
     text-align: center;
 }*/
+
+@media( max-width: 944px ) {
+    .layout-row {
+        flex-direction: column;
+    }
+
+    .layout-item {
+        width: 100% !important;
+    }
+}

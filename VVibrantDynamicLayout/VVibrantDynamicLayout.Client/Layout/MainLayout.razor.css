@@ -1,11 +1,16 @@
 .page {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 main {
     flex: 1;
+    height: 100vh;
+}
+
+.content {
+    height: 100%;
 }
 
 .sidebar {
@@ -47,10 +52,6 @@ main {
 }
 
 @media (min-width: 641px) {
-    .page {
-        flex-direction: row;
-    }
-
     .sidebar {
         width: 250px;
         height: 100vh;
@@ -68,11 +69,6 @@ main {
         flex: 1;
         text-align: right;
         width: 0;
-    }
-
-    .top-row, article {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
     }
 }
 
