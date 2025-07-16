@@ -8,18 +8,15 @@
 
 @if (LayoutComponentData != null)
 {
-    // If the component has children, it's a container (row or column).
     if (LayoutComponentData.Components.Any())
     {
         <div class="@GetContainerClasses()" style="@GetContainerStyle()">
             @foreach (var childComponent in LayoutComponentData.Components)
             {
-                // Recursively render children.
                 <LayoutRenderer LayoutComponentData="childComponent" />
             }
         </div>
     }
-    // Otherwise, it's a leaf node to be rendered.
     else
     {
         <div class="layout-item" style="@GetItemStyle()">
@@ -60,7 +57,6 @@
         var sb = new StringBuilder();
         if (!string.IsNullOrEmpty(LayoutComponentData.Width))
         {
-            // Use flex-basis for sizing within a flex container.
             sb.Append($"flex-basis: {LayoutComponentData.Width};");
         }
         return sb.ToString();

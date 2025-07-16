@@ -13,7 +13,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 h1:focus {
@@ -71,21 +71,19 @@ h1:focus {
 
 .layout-container {
     flex-direction: column;
-    flex-grow: 1; /* Allows container to fill available space */
+    flex-grow: 1;
     height: 100%;
     padding: var(--partition-spacing);
     gap: var(--partition-spacing);
     background-color: #e0f7fa;
 }
 
-    /* This simple but powerful selector pushes the last element (e.g., footer) to the bottom */
     .layout-container > :last-child {
         margin-top: auto;
     }
 
 .layout-row {
     flex-direction: row;
-    background-color: #b2dfdb; /* Different color for rows */
     padding: 5px;
 }
 
@@ -103,22 +101,17 @@ h1:focus {
     display: flex;
     align-items: center;
     border: 1px solid #f48fb1;
-    /* Default flex behavior */
     flex-grow: 1;
     flex-shrink: 1;
-    flex-basis: calc(50% - (var(--gutter) / 2));
 }
 
 @media(max-width: 944px) {
     .layout-row {
-        flex-direction: column; /* Stack items vertically on small screens */
+        flex-direction: column;
     }
 
-        /* This more specific selector overrides the flex-basis from the inline style
-      without needing !important, making it more maintainable.
-    */
         .layout-row > .layout-item {
-            flex-basis: 100% !important; /* !important is a pragmatic choice here to override inline styles */
+            flex-basis: 100% !important;
             width: 100%;
         }
 }
