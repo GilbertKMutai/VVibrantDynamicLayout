@@ -4,5 +4,5 @@ public class LayoutSettings
 {
     public string Gutter { get; set; } = string.Empty;
     public string PartitionSpacing { get; set; } = string.Empty;
-    public List<LayoutComponent> Partitions { get; set; } = null!;
+    public List<LayoutComponent> Partitions { get; set; } = new();
 }

@@ -1,78 +1,72 @@
-﻿@using Microsoft.Extensions.Options
+﻿@using System.Text
+@using Microsoft.Extensions.Options
 @using VVibrantDynamicLayout.Client.Configuration
-@using VVibrantDynamicLayout.Client.Enums
+@using VVibrantDynamicLayout.Client.Services
 
 @inject IOptions<LayoutSettings> LayoutSettings
+@inject ComponentRegistryService ComponentRegistry
 
 @if (LayoutComponentData != null)
 {
-    <div class="@GetTypeClass()" style="@GetContainerStyle()">
-        @if (LayoutComponentData.Components != null)
-        {
+    // If the component has children, it's a container (row or column).
+    if (LayoutComponentData.Components.Any())
+    {
+        <div class="@GetContainerClasses()" style="@GetContainerStyle()">
             @foreach (var childComponent in LayoutComponentData.Components)
             {
-                if (childComponent.IsPartition)
-                {
-                    <LayoutRenderer LayoutComponentData="childComponent" IsLastPartition = "false" />
-                }
-                else
-                {
-                    <ComponentContainer Width="@childComponent.Width" Alignment="@childComponent.Alignment">
-                        @RenderDynamicComponent(childComponent.Id)
-                    </ComponentContainer>
-                }
+                // Recursively render children.
+                <LayoutRenderer LayoutComponentData="childComponent" />
             }
-        }
-    </div>
+        </div>
+    }
+    // Otherwise, it's a leaf node to be rendered.
+    else
+    {
+        <div class="layout-item" style="@GetItemStyle()">
+            @RenderDynamicComponent(LayoutComponentData.Id)
+        </div>
+    }
 }
 
 @code {
-    [Parameter]
-    public LayoutComponent LayoutComponentData { get; set; } = new LayoutComponent();
-    [Parameter]
-    public bool IsLastPartition { get; set; }
+    [Parameter, EditorRequired]
+    public LayoutComponent LayoutComponentData { get; set; } = default!;
 
-    private string Gutter => LayoutSettings.Value.Gutter ?? "0px";
-    private string PartitionSpacing => LayoutSettings.Value.PartitionSpacing ?? "0px";
-
-    private string GetTypeClass()
+    private string GetContainerClasses() => LayoutComponentData.Type switch
     {
-        return LayoutComponentData.Type switch
-        {
-            "row" => "layout-row",
-            "column" => "layout-column",
-            _ => "layout-item"
-        };
-    }
+        "row" => "layout-row",
+        "column" => "layout-column",
+        _ => ""
+    };
 
     private string GetContainerStyle()
     {
-        var style = "";
-
-        if (LayoutComponentData.IsPartition)
-        {
-            style += $"gap: {Gutter};";
-        }
+        var sb = new StringBuilder();
+        sb.Append($"gap: {LayoutSettings.Value.Gutter};");
 
         if (!string.IsNullOrEmpty(LayoutComponentData.Width))
         {
-            style += $"flex-basis: {LayoutComponentData.Width}; flex-grow: 0; flex-shrink: 0;";
+            sb.Append($" flex-basis: {LayoutComponentData.Width}; flex-grow: 0; flex-shrink: 0;");
         }
-
         if (!string.IsNullOrEmpty(LayoutComponentData.Alignment))
         {
-            style += $"justify-content: {GetFlexAlignment(LayoutComponentData.Alignment)};";
+            sb.Append($" justify-content: {GetFlexAlignment(LayoutComponentData.Alignment)};");
         }
-
-        if (IsLastPartition)
-        {
-            style += "margin-top: auto;";
-        }
-
-        return style;
+        return sb.ToString();
     }
 
-    private string GetFlexAlignment(string alignment) => alignment switch
+    private string GetItemStyle()
+    {
+        var sb = new StringBuilder();
+        if (!string.IsNullOrEmpty(LayoutComponentData.Width))
+        {
+            // Use flex-basis for sizing within a flex container.
+            sb.Append($"flex-basis: {LayoutComponentData.Width};");
+        }
+        return sb.ToString();
+    }
+
+    private string GetFlexAlignment(string alignment) => alignment.ToLower() switch
     {
         "left" => "flex-start",
         "right" => "flex-end",
@@ -80,38 +74,10 @@
         _ => "flex-start"
     };
 
-
     private RenderFragment RenderDynamicComponent(string componentId) => builder =>
     {
-        Type componentType = GetBlazorComponentType(componentId);
-
-        if (componentType != null)
-        {
-            builder.OpenComponent(0, componentType);
-            builder.CloseComponent();
-        }
-        else
-        {
-            builder.AddContent(0, $"Component not found: {componentId}");
-        }
+        var componentType = ComponentRegistry.GetComponentType(componentId);
+        builder.OpenComponent(0, componentType);
+        builder.CloseComponent();
     };
-
-    private Type GetBlazorComponentType(string componentId)
-    {
-        return componentId switch
-        {
-            "Component-Logo" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.LogoComponent),
-            "Component-OpeningHours" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.OpeningHoursComponent),
-            "Component-ContactDetails" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.ContactDetailsComponent),
-            "Component-Menu" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.MenuComponent),
-            "Component-ProfileMenu" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.ProfileMenuComponent),
-            "Component-Search" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.SearchComponent),
-            "Component-QuickLinks" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.QuickLinksComponent),
-            "Component-Announcements" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.AnnouncementsComponent),
-            "Component-NewArrivals" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.NewArrivalsComponent),
-            "Component-Copyright" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.CopyrightComponent),
-            "Component-OtherInfo" => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.OtherInfoComponent),
-            _ => typeof(VVibrantDynamicLayout.Client.Pages.PlaceholderComponents.DefaultComponent)
-        };
-    }
 }
