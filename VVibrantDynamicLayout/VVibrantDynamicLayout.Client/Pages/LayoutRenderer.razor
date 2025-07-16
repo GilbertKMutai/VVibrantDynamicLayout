@@ -28,7 +28,7 @@
 
 @code {
     [Parameter]
-    public LayoutComponent LayoutComponentData { get; set; }
+    public LayoutComponent LayoutComponentData { get; set; } = new LayoutComponent();
     [Parameter]
     public bool IsLastPartition { get; set; }
 
@@ -58,6 +58,7 @@
         {
             style += $"flex-basis: {LayoutComponentData.Width}; flex-grow: 0; flex-shrink: 0;";
         }
+
         if (!string.IsNullOrEmpty(LayoutComponentData.Alignment))
         {
             style += $"justify-content: {GetFlexAlignment(LayoutComponentData.Alignment)};";
@@ -83,6 +84,7 @@
     private RenderFragment RenderDynamicComponent(string componentId) => builder =>
     {
         Type componentType = GetBlazorComponentType(componentId);
+
         if (componentType != null)
         {
             builder.OpenComponent(0, componentType);
