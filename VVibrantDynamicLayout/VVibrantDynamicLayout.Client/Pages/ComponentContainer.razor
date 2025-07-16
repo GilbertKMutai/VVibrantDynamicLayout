@@ -1,4 +1,4 @@
-﻿@if (ChildContent != null)
+﻿@* @if (ChildContent != null)
 {
     <div class="layout-item @($"align-{Alignment}")" style="@GetStyle()">
         @ChildContent
@@ -22,4 +22,4 @@
 
         return $"width: {Width}; flex: {flexBasis};";
     }
-}
+} *@

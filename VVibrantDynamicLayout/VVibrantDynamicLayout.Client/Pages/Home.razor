@@ -1,19 +1,17 @@
 ﻿@page "/"
 @using Microsoft.Extensions.Options
 @using VVibrantDynamicLayout.Client.Configuration
+
 @inject IOptions<LayoutSettings> LayoutSettings
 
 <PageTitle>Dynamic Layout</PageTitle>
 
-@if (LayoutConfig?.Partitions != null)
+@if (LayoutConfig?.Partitions.Any() == true)
 {
     <div class="layout-container" style="--gutter: @LayoutConfig.Gutter; --partition-spacing: @LayoutConfig.PartitionSpacing;">
-        @for (int partitionIndex = 0; partitionIndex < LayoutConfig.Partitions.Count; partitionIndex++)
+        @foreach (var partition in LayoutConfig.Partitions)
         {
-            var partition = LayoutConfig.Partitions[partitionIndex];
-            bool isLastPartition = partitionIndex == LayoutConfig.Partitions.Count - 1;
-           
-            <LayoutRenderer LayoutComponentData="partition" IsLastPartition="isLastPartition" />
+            <LayoutRenderer LayoutComponentData="partition" />
         }
     </div>
 }
@@ -23,7 +21,7 @@ else
 }
 
 @code {
-    private LayoutSettings LayoutConfig = new();
+    private LayoutSettings? LayoutConfig;
 
     protected override void OnInitialized()
     {
